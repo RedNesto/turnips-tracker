@@ -1,6 +1,7 @@
 {
   "name": "turnips-tracker",
   "version": "0.1.0",
+  "license": "MIT",
   "homepage": "https://rednesto.github.io/turnips-tracker",
   "private": true,
   "dependencies": {
