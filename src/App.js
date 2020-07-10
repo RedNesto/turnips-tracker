@@ -1,19 +1,23 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import './App.css'
 import {compareDates} from './helpers'
-import {Line as LineChart} from 'react-chartjs-2'
+import {defaults as ChartsDefaults, Line as LineChart} from 'react-chartjs-2'
 import moment from 'moment'
 
 function App() {
     const tableRef = React.createRef()
     const priceChartRef = React.createRef()
     const profitChartRef = React.createRef()
+    ChartsDefaults.global.maintainAspectRatio = false
     return (
         <div>
-            <LoadTurnipsData tableRef={tableRef} priceChartRef={priceChartRef}/>
-            <div style={{display: 'flex', alignItems: 'center', position: "relative", height: "50vh", width: "50vw"}}>
-                <LineChart ref={priceChartRef}/>
-                <LineChart ref={profitChartRef}/>
+            <LoadTurnipsData tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef}/>
+            <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
+                <LineChart ref={priceChartRef} data={{}}/>
+            </div>
+            <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
+                <LineChart ref={profitChartRef} data={{}}/>
             </div>
             <TurnipsTable ref={tableRef}/>
         </div>
@@ -29,6 +33,7 @@ class LoadTurnipsData extends React.Component {
         this.state = {
             tableRef: props.tableRef,
             priceChartRef: props.priceChartRef,
+            profitChartRef: props.profitChartRef,
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -55,14 +60,19 @@ class LoadTurnipsData extends React.Component {
         const reader = new FileReader()
         const turnipsTable = this.state.tableRef.current
         const turnipsPriceChart = this.state.priceChartRef.current
+        const turnipsProfitChart = this.state.profitChartRef.current
         reader.onload = _ => {
             const text = reader.result
             console.assert(typeof text === "string", "readAsText did not return a String result but a %s of value %s", text.constructor.name, text)
             try {
                 const parsed = JSON.parse(text)
                 turnipsTable.setState({entries: parsed})
-                turnipsPriceChart.chartInstance.data = createChartData(parsed)
+                turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(parsed)
                 turnipsPriceChart.chartInstance.update()
+                ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
+                turnipsProfitChart.chartInstance.data = createProfitChartData(parsed)
+                turnipsProfitChart.chartInstance.update()
+                ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
             } catch (error) {
                 console.error("Error occurred when parsing turnips data: %s", error)
                 let errorMessage = "more details in the console"
@@ -144,7 +154,7 @@ function turnipsEntriesSort(a, b) {
     return compareDates(a.date, b.date)
 }
 
-function createChartData(jsonData) {
+function createTurnipsNumberChartData(jsonData) {
     let dayLabels = []
     let sellingPriceData = []
     let buyingPriceData = []
@@ -189,6 +199,39 @@ function createChartData(jsonData) {
                 }]
             }
         }
+    }
+}
+
+function createProfitChartData(jsonData) {
+    let weekLabels = []
+    let weekProfits = []
+    let weekBought = 0
+    let weekSold = 0
+    jsonData.sort(turnipsEntriesSort).forEach(entry => {
+        if (entry.sold != null) {
+            if (weekLabels.length === 0) {
+                // Skip sold values that are not in a cycle (starting sunday)
+                return
+            }
+
+            weekSold += entry.sold * entry.price
+        } else {
+            if (weekLabels.length !== 0) {
+                weekProfits.push(weekSold - weekBought)
+            }
+
+            weekLabels.push(entry.date)
+            weekBought = entry.bought * entry.price
+            weekSold = 0
+        }
+    })
+
+    return {
+        labels: weekLabels,
+        datasets: [{
+            label: 'Profit',
+            data: weekProfits
+        }]
     }
 }
 
