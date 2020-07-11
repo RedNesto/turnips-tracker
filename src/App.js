@@ -96,54 +96,72 @@ class TurnipsTable extends React.Component {
 
     render() {
         if (!this.state) {
-            return (
-                <p>No Turnips Data Loaded</p>
-            )
+            return (<p>No Turnips Data Loaded</p>)
         }
 
         const errorMessage = this.state.errorMessage
         if (errorMessage) {
-            return (
-                <p>Error when reading the turnips data: {errorMessage}</p>
-            )
+            return (<p>Error when reading the turnips data: {errorMessage}</p>)
         }
 
         const turnipsEntries = this.state.entries.sort(turnipsEntriesSort)
 
-        const listEntries = turnipsEntries.map((entry, _) => TurnipsEntryCell(entry))
+        const turnipsRows = turnipsEntries.map(entry => TurnipsTableRow(entry))
         return (
-            <ol id="turnips-table">
-                {listEntries}
-            </ol>
+            <table id="turnips-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Bought / Sold</th>
+                    <th>Detail</th>
+                </tr>
+                </thead>
+                <tbody>
+                {turnipsRows}
+                </tbody>
+            </table>
         )
     }
 }
 
-function TurnipsEntryCell(props) {
+function TurnipsTableRow(props) {
     let detail
+    let formattedCount
     const bought = props.bought
     const sold = props.sold
     const price = props.price
     if (bought != null) {
-        if (price != null || price <= 0) {
-            detail = (<p>Bought {bought} for {price * bought} ({price}/unit)</p>)
+        formattedCount = bought.toLocaleString()
+        if (bought <= 0) {
+            detail = `Bought none`
+        } else if (price != null && price > 0) {
+            const formattedTotal = (price * bought).toLocaleString()
+            detail = `Bought ${formattedCount} for ${formattedTotal} (${price}/unit)`
         } else {
-            detail = (<p>Bought {bought} for an unknown price</p>)
+            detail = `Bought ${formattedCount} for an unknown price`
         }
     } else if (sold != null) {
-        if (price != null || price <= 0) {
-            detail = (<p>Sold {sold} for {price * sold} ({price}/unit)</p>)
+        formattedCount = sold.toLocaleString()
+        if (sold <= 0) {
+            detail = `Sold none`
+        } else if (price != null && price > 0) {
+            const formattedTotal = (price * sold).toLocaleString()
+            detail = `Sold ${formattedCount} for ${formattedTotal} (${price}/unit)`
         } else {
-            detail = (<p>Sold {sold} for an unknown price</p>)
+            detail = `Sold ${formattedCount} for an unknown price`
         }
     } else {
-        detail = (<p>No data available</p>)
+        formattedCount = 'unknown'
+        detail = 'No data available'
     }
     return (
-        <li key={props.date + '-' + props.half}>
-            <p>Turnips of {props.date} ({dayForDate(props.date)}) {props.half}</p>
-            {detail}
-        </li>
+        <tr key={props.date + '-' + props.half}>
+            <td>{props.date} ({dayForDate(props.date)}) {props.half}</td>
+            <td>{price}</td>
+            <td>{formattedCount}</td>
+            <td>{detail}</td>
+        </tr>
     )
 }
 
