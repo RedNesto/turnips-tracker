@@ -1,0 +1,452 @@
+[
+  {
+    "date": "2020-05-31",
+    "bought": 12000,
+    "price": 107
+  },
+  {
+    "date": "2020-06-01",
+    "half": "morning",
+    "sold": 0,
+    "price": 109
+  },
+  {
+    "date": "2020-06-01",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 149
+  },
+  {
+    "date": "2020-06-02",
+    "half": "morning",
+    "sold": 12000,
+    "price": 111
+  },
+  {
+    "date": "2020-06-02",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 100
+  },
+  {
+    "date": "2020-06-03",
+    "half": "morning",
+    "sold": 0,
+    "price": 80
+  },
+  {
+    "date": "2020-06-03",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 74
+  },
+  {
+    "date": "2020-06-04",
+    "half": "morning",
+    "sold": 0,
+    "price": 63
+  },
+  {
+    "date": "2020-06-04",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 134
+  },
+  {
+    "date": "2020-06-05",
+    "half": "morning",
+    "sold": 0,
+    "price": 99
+  },
+  {
+    "date": "2020-06-05",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 74
+  },
+  {
+    "date": "2020-06-06",
+    "half": "morning",
+    "sold": 0,
+    "price": 70
+  },
+  {
+    "date": "2020-06-06",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 119
+  },
+  {
+    "date": "2020-06-07",
+    "bought": 12000,
+    "price": 107
+  },
+  {
+    "date": "2020-06-08",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 92
+  },
+  {
+    "date": "2020-06-09",
+    "half": "morning",
+    "sold": 0,
+    "price": 88
+  },
+  {
+    "date": "2020-06-09",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 84
+  },
+  {
+    "date": "2020-06-10",
+    "half": "morning",
+    "sold": 0,
+    "price": 80
+  },
+  {
+    "date": "2020-06-10",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 75
+  },
+  {
+    "date": "2020-06-11",
+    "half": "morning",
+    "sold": 0,
+    "price": 70
+  },
+  {
+    "date": "2020-06-11",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 65
+  },
+  {
+    "date": "2020-06-12",
+    "half": "morning",
+    "sold": 0,
+    "price": 60
+  },
+  {
+    "date": "2020-06-12",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 56
+  },
+  {
+    "date": "2020-06-13",
+    "half": "afternoon",
+    "sold": 12000,
+    "price": 47
+  },
+  {
+    "date": "2020-06-14",
+    "bought": 12000,
+    "price": 90
+  },
+  {
+    "date": "2020-06-15",
+    "half": "morning",
+    "sold": 0,
+    "price": 49
+  },
+  {
+    "date": "2020-06-15",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 45
+  },
+  {
+    "date": "2020-06-16",
+    "half": "morning",
+    "sold": 0,
+    "price": 42
+  },
+  {
+    "date": "2020-06-16",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 39
+  },
+  {
+    "date": "2020-06-17",
+    "half": "morning",
+    "sold": 0,
+    "price": 35
+  },
+  {
+    "date": "2020-06-17",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 32
+  },
+  {
+    "date": "2020-06-18",
+    "half": "morning",
+    "sold": 0,
+    "price": 28
+  },
+  {
+    "date": "2020-06-18",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 102
+  },
+  {
+    "date": "2020-06-19",
+    "half": "morning",
+    "sold": 11100,
+    "price": 99
+  },
+  {
+    "date": "2020-06-19",
+    "half": "afternoon",
+    "sold": 900,
+    "price": 132
+  },
+  {
+    "date": "2020-06-20",
+    "half": "morning",
+    "sold": 0,
+    "price": 142
+  },
+  {
+    "date": "2020-06-20",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 131
+  },
+  {
+    "date": "2020-06-21",
+    "bought": 12000,
+    "price": 93
+  },
+  {
+    "date": "2020-06-22",
+    "half": "morning",
+    "sold": 0,
+    "price": 82
+  },
+  {
+    "date": "2020-06-22",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 78
+  },
+  {
+    "date": "2020-06-23",
+    "half": "morning",
+    "sold": 0,
+    "price": 75
+  },
+  {
+    "date": "2020-06-23",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 72
+  },
+  {
+    "date": "2020-06-24",
+    "half": "morning",
+    "sold": 0,
+    "price": 68
+  },
+  {
+    "date": "2020-06-24",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 122
+  },
+  {
+    "date": "2020-06-25",
+    "half": "morning",
+    "sold": 0,
+    "price": 161
+  },
+  {
+    "date": "2020-06-25",
+    "half": "afternoon",
+    "sold": 6000,
+    "price": 241
+  },
+  {
+    "date": "2020-06-26",
+    "half": "morning",
+    "sold": 6000,
+    "price": 137
+  },
+  {
+    "date": "2020-06-26",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 113
+  },
+  {
+    "date": "2020-06-27",
+    "half": "morning",
+    "sold": 0,
+    "price": 82
+  },
+  {
+    "date": "2020-06-27",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 58
+  },
+  {
+    "date": "2020-06-28",
+    "bought": 12000,
+    "price": 107
+  },
+  {
+    "date": "2020-06-29",
+    "half": "morning",
+    "sold": 0,
+    "price": 102
+  },
+  {
+    "date": "2020-06-29",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 104
+  },
+  {
+    "date": "2020-06-30",
+    "half": "morning",
+    "sold": 0,
+    "price": 127
+  },
+  {
+    "date": "2020-06-30",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 86
+  },
+  {
+    "date": "2020-07-01",
+    "half": "morning",
+    "sold": 0,
+    "price": 76
+  },
+  {
+    "date": "2020-07-01",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 122
+  },
+  {
+    "date": "2020-07-02",
+    "half": "morning",
+    "sold": 0,
+    "price": 100
+  },
+  {
+    "date": "2020-07-02",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 65
+  },
+  {
+    "date": "2020-07-03",
+    "half": "morning",
+    "sold": 0,
+    "price": 57
+  },
+  {
+    "date": "2020-07-03",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 50
+  },
+  {
+    "date": "2020-07-04",
+    "half": "morning",
+    "sold": 0,
+    "price": 99
+  },
+  {
+    "date": "2020-07-04",
+    "half": "afternoon",
+    "sold": 12000,
+    "price": 141
+  },
+  {
+    "date": "2020-07-05",
+    "bought": 12000,
+    "price": 98
+  },
+  {
+    "date": "2020-07-06",
+    "half": "morning",
+    "sold": 0,
+    "price": 40
+  },
+  {
+    "date": "2020-07-06",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 36
+  },
+  {
+    "date": "2020-07-07",
+    "half": "morning",
+    "sold": 0,
+    "price": 122
+  },
+  {
+    "date": "2020-07-07",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 91
+  },
+  {
+    "date": "2020-07-08",
+    "half": "morning",
+    "sold": 0,
+    "price": 181
+  },
+  {
+    "date": "2020-07-08",
+    "half": "afternoon",
+    "sold": 8500,
+    "price": 183
+  },
+  {
+    "date": "2020-07-09",
+    "half": "morning",
+    "sold": 0,
+    "price": 146
+  },
+  {
+    "date": "2020-07-09",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 47
+  },
+  {
+    "date": "2020-07-10",
+    "half": "morning",
+    "sold": 0,
+    "price": 44
+  },
+  {
+    "date": "2020-07-10",
+    "half": "afternoon",
+    "sold": 0,
+    "price": 40
+  },
+  {
+    "date": "2020-07-11",
+    "half": "morning",
+    "sold": 0,
+    "price": 37
+  },
+  {
+    "date": "2020-07-11",
+    "half": "afternoon",
+    "sold": 3500,
+    "price": 34
+  }
+]

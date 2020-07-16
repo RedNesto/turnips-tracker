@@ -35,7 +35,10 @@ class LoadTurnipsData extends React.Component {
             priceChartRef: props.priceChartRef,
             profitChartRef: props.profitChartRef,
         }
+        this.useSample = this.useSample.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
+        this.reportError = this.reportError.bind(this)
     }
 
     render() {
@@ -43,8 +46,22 @@ class LoadTurnipsData extends React.Component {
             <form>
                 <label htmlFor="turnips-file">Open Turnips Data: </label>
                 <input type="file" id="turnips-file" onChange={this.handleChange} title="Open Turnips Data"/>
+                <button onClick={this.useSample}>Open Sample</button>
             </form>
         )
+    }
+
+    useSample(event) {
+        fetch("/turnips-tracker/sample.json")
+            .then(response => {
+                if (!response.ok) {
+                    this.reportError(`Could not get sample data: ${response.status} ${response.statusText}`)
+                    return
+                }
+
+                return response.text()
+            }).then(this.parseAndOpenJson)
+        event.preventDefault()
     }
 
     handleChange(event) {
@@ -59,28 +76,10 @@ class LoadTurnipsData extends React.Component {
 
         const reader = new FileReader()
         const turnipsTable = this.state.tableRef.current
-        const turnipsPriceChart = this.state.priceChartRef.current
-        const turnipsProfitChart = this.state.profitChartRef.current
         reader.onload = _ => {
             const text = reader.result
             console.assert(typeof text === "string", "readAsText did not return a String result but a %s of value %s", text.constructor.name, text)
-            try {
-                const parsed = JSON.parse(text)
-                turnipsTable.setState({entries: parsed})
-                turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(parsed)
-                turnipsPriceChart.chartInstance.update()
-                ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
-                turnipsProfitChart.chartInstance.data = createProfitChartData(parsed)
-                turnipsProfitChart.chartInstance.update()
-                ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
-            } catch (error) {
-                console.error("Error occurred when parsing turnips data: %s", error)
-                let errorMessage = "more details in the console"
-                if (error instanceof SyntaxError) {
-                    errorMessage = error.message
-                }
-                turnipsTable.setState({errorMessage: errorMessage})
-            }
+            this.parseAndOpenJson(text)
         }
         reader.onerror = _ => {
             const error = reader.error
@@ -89,6 +88,38 @@ class LoadTurnipsData extends React.Component {
         }
         reader.readAsText(turnipsFile)
         event.preventDefault()
+    }
+
+    parseAndOpenJson(text) {
+        try {
+            const parsed = JSON.parse(text)
+            this.openJson(parsed)
+        } catch (error) {
+            console.error("Error occurred when opening turnips data: %s", error)
+            let errorMessage = "more details in the console"
+            if (error instanceof SyntaxError) {
+                errorMessage = error.message
+            }
+            this.reportError(errorMessage)
+        }
+    }
+
+    openJson(json) {
+        const turnipsPriceChart = this.state.priceChartRef.current
+        const turnipsProfitChart = this.state.profitChartRef.current
+        const turnipsTable = this.state.tableRef.current
+        turnipsTable.setState({entries: json})
+        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(json)
+        turnipsPriceChart.chartInstance.update()
+        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
+        turnipsProfitChart.chartInstance.data = createProfitChartData(json)
+        turnipsProfitChart.chartInstance.update()
+        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
+    }
+
+    reportError(errorMessage) {
+        const turnipsTable = this.state.tableRef.current
+        turnipsTable.setState({errorMessage: errorMessage})
     }
 }
 
@@ -243,6 +274,10 @@ function createProfitChartData(jsonData) {
             weekSold = 0
         }
     })
+
+    if (weekBought > 0 || weekSold > 0) {
+        weekProfits.push(weekSold - weekBought)
+    }
 
     return {
         labels: weekLabels,
