@@ -39,6 +39,7 @@ class LoadTurnipsData extends React.Component {
         this.handleChange = this.handleChange.bind(this)
         this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
         this.reportError = this.reportError.bind(this)
+        this.clearError = this.clearError.bind(this)
     }
 
     render() {
@@ -115,11 +116,18 @@ class LoadTurnipsData extends React.Component {
         turnipsProfitChart.chartInstance.data = createProfitChartData(json)
         turnipsProfitChart.chartInstance.update()
         ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
+
+        this.clearError()
     }
 
     reportError(errorMessage) {
         const turnipsTable = this.state.tableRef.current
         turnipsTable.setState({errorMessage: errorMessage})
+    }
+
+    clearError() {
+        const turnipsTable = this.state.tableRef.current
+        turnipsTable.setState({errorMessage: null})
     }
 }
 
