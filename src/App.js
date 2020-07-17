@@ -9,10 +9,12 @@ function App() {
     const tableRef = React.createRef()
     const priceChartRef = React.createRef()
     const profitChartRef = React.createRef()
+    const entryEditorRef = React.createRef()
     ChartsDefaults.global.maintainAspectRatio = false
     return (
         <div>
-            <LoadTurnipsData tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef}/>
+            <LoadTurnipsData tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef} entryEditorRef={entryEditorRef}/>
+            <EntryEditor ref={entryEditorRef} tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef}/>
             <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
                 <LineChart ref={priceChartRef} data={{}}/>
             </div>
@@ -34,7 +36,11 @@ class LoadTurnipsData extends React.Component {
             tableRef: props.tableRef,
             priceChartRef: props.priceChartRef,
             profitChartRef: props.profitChartRef,
+            entryEditorRef: props.entryEditorRef,
         }
+
+        this.createNewData = this.createNewData.bind(this)
+        this.clearData = this.clearData.bind(this)
         this.useSample = this.useSample.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
@@ -45,11 +51,28 @@ class LoadTurnipsData extends React.Component {
     render() {
         return (
             <form>
+                <button onClick={this.createNewData}>New Turnips Data</button>
                 <label htmlFor="turnips-file">Open Turnips Data: </label>
                 <input type="file" id="turnips-file" onChange={this.handleChange} title="Open Turnips Data"/>
                 <button onClick={this.useSample}>Open Sample</button>
+                <button onClick={this.clearData}>Clear</button>
             </form>
         )
+    }
+
+    createNewData(event) {
+        event.preventDefault()
+        this.state.entryEditorRef.current.setState({hidden: false})
+    }
+
+    clearData(event) {
+        event.preventDefault()
+        const turnipsPriceChart = this.state.priceChartRef.current
+        const turnipsProfitChart = this.state.profitChartRef.current
+        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.setProperty('display', 'none')
+        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.setProperty('display', 'none')
+        this.state.tableRef.current.setState({entries: []})
+        this.state.entryEditorRef.current.setState({hidden: true})
     }
 
     useSample(event) {
@@ -131,7 +154,110 @@ class LoadTurnipsData extends React.Component {
     }
 }
 
+class EntryEditor extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            tableRef: props.tableRef,
+            priceChartRef: props.priceChartRef,
+            profitChartRef: props.profitChartRef,
+            hidden: true,
+            formValid: false,
+            date: '',
+            half: 'morning',
+            price: 0,
+            quantity: 0,
+        }
+
+        this.validateForm = this.validateForm.bind(this)
+        this.handleInputChange = this.handleInputChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit} style={{display: this.state.hidden ? 'none' : 'unset'}}>
+                <label>
+                    Date:
+                    <input name="date" type="date" value={this.state.date} onChange={this.handleInputChange}/>
+                </label>
+                <label>
+                    Half:
+                    <select name="half" value={this.state.half} onChange={this.handleInputChange}>
+                        <option value="morning">Morning</option>
+                        <option value="afternoon">Afternoon</option>
+                    </select>
+                </label>
+                <label>
+                    Price:
+                    <input name="price" type="number" value={this.state.price} onChange={this.handleInputChange}/>
+                </label>
+                <label>
+                    Quantity:
+                    <input name="quantity" type="number" value={this.state.quantity} onChange={this.handleInputChange}/>
+                </label>
+                <button type="submit" disabled={!this.state.formValid}>Add</button>
+            </form>
+        )
+    }
+
+    validateForm() {
+        return this.state.date.length !== 0
+    }
+
+    handleInputChange(event) {
+        const target = event.target
+        const value = target.type === 'number' ? parseInt(target.value) : target.value
+        this.setState({[target.name]: value, formValid: this.validateForm()})
+    }
+
+    handleSubmit(event) {
+        event.preventDefault()
+        if (!this.state.formValid) {
+            return
+        }
+
+        const date = this.state.date
+        const half = this.state.half
+        const price = this.state.price
+        const quantity = this.state.quantity
+        const entry = isSunday(date) ? {date: date, bought: quantity, price: price} : {date: date, half: half, sold: quantity, price: price}
+
+        const turnipsTable = this.state.tableRef.current
+        turnipsTable.addEntry(entry)
+        const turnipsPriceChart = this.state.priceChartRef.current
+        const turnipsProfitChart = this.state.profitChartRef.current
+        const entries = turnipsTable.state.entries
+        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(entries)
+        turnipsPriceChart.chartInstance.update()
+        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
+        turnipsProfitChart.chartInstance.data = createProfitChartData(entries)
+        turnipsProfitChart.chartInstance.update()
+        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
+    }
+}
+
 class TurnipsTable extends React.Component {
+
+    constructor(props) {
+        super(props)
+
+        this.addEntry = this.addEntry.bind(this)
+    }
+
+    addEntry(entry) {
+        const entries = this.state?.entries ?? []
+
+        const key = createTurnipsKey(entry)
+        const existingEntryIndex = entries.findIndex(value => createTurnipsKey(value) === key)
+        if (existingEntryIndex < 0) {
+            entries.push(entry)
+        } else {
+            entries[existingEntryIndex] = entry
+        }
+        this.setState({entries: entries})
+    }
 
     render() {
         if (!this.state) {
@@ -145,6 +271,9 @@ class TurnipsTable extends React.Component {
 
         const turnipsEntries = this.state.entries.sort(turnipsEntriesSort)
 
+        if (turnipsEntries.length === 0) {
+            return (<p>No Turnips Data Loaded</p>)
+        }
         const turnipsRows = turnipsEntries.map(entry => TurnipsTableRow(entry))
         return (
             <table id="turnips-table">
@@ -195,13 +324,17 @@ function TurnipsTableRow(props) {
         detail = 'No data available'
     }
     return (
-        <tr key={props.date + '-' + props.half}>
+        <tr key={createTurnipsKey(props)}>
             <td>{props.date} ({dayForDate(props.date)}) {props.half}</td>
             <td>{price}</td>
             <td>{formattedCount}</td>
             <td>{detail}</td>
         </tr>
     )
+}
+
+function createTurnipsKey(entry) {
+    return entry.date + '-' + entry.half
 }
 
 function turnipsEntriesSort(a, b) {
@@ -298,4 +431,8 @@ function createProfitChartData(jsonData) {
 
 function dayForDate(date) {
     return moment(date, 'yyyy-MM-DD').format('dddd')
+}
+
+function isSunday(date) {
+    return moment(date, 'yyyy-MM-DD').weekday() === 0
 }
