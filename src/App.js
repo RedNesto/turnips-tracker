@@ -42,6 +42,7 @@ class LoadTurnipsData extends React.Component {
         this.createNewData = this.createNewData.bind(this)
         this.clearData = this.clearData.bind(this)
         this.useSample = this.useSample.bind(this)
+        this.openDataFileSelection = this.openDataFileSelection.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
         this.reportError = this.reportError.bind(this)
@@ -52,8 +53,9 @@ class LoadTurnipsData extends React.Component {
         return (
             <form>
                 <button onClick={this.createNewData}>New Turnips Data</button>
-                <label htmlFor="turnips-file">Open Turnips Data: </label>
-                <input type="file" id="turnips-file" onChange={this.handleChange} title="Open Turnips Data"/>
+                <button onClick={this.openDataFileSelection}>Select Turnips Data</button>
+                <input type="file" id="turnips-file" onChange={this.handleChange}
+                       style={{width: 0, height: 0}} ref={ref => this.turnipsFileInput = ref}/>
                 <button onClick={this.useSample}>Open Sample</button>
                 <button onClick={this.clearData}>Clear</button>
             </form>
@@ -86,6 +88,12 @@ class LoadTurnipsData extends React.Component {
                 return response.text()
             }).then(this.parseAndOpenJson)
         event.preventDefault()
+    }
+
+    openDataFileSelection(event) {
+        event.preventDefault()
+        this.turnipsFileInput.value = ''
+        this.turnipsFileInput.click()
     }
 
     handleChange(event) {
