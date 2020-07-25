@@ -6,14 +6,18 @@ import {defaults as ChartsDefaults, Line as LineChart} from 'react-chartjs-2'
 import moment from 'moment'
 
 function App() {
+    const dataLoaderRef = React.createRef()
     const tableRef = React.createRef()
     const priceChartRef = React.createRef()
     const profitChartRef = React.createRef()
     const entryEditorRef = React.createRef()
+
     ChartsDefaults.global.maintainAspectRatio = false
+    handleWindowDND(dataLoaderRef)
+
     return (
         <div>
-            <LoadTurnipsData tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef} entryEditorRef={entryEditorRef}/>
+            <LoadTurnipsData ref={dataLoaderRef} tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef} entryEditorRef={entryEditorRef}/>
             <EntryEditor ref={entryEditorRef} tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef}/>
             <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
                 <LineChart ref={priceChartRef} data={{}}/>
@@ -24,6 +28,17 @@ function App() {
             <TurnipsTable ref={tableRef}/>
         </div>
     )
+}
+
+function handleWindowDND(dataLoaderRef) {
+    window.addEventListener('dragover', event => event.preventDefault())
+    window.addEventListener('drop', event => {
+        event.preventDefault()
+        let file = event.dataTransfer.files[0]
+        if (file) {
+            dataLoaderRef.current.parseAndOpenJsonFile(file)
+        }
+    })
 }
 
 export default App
@@ -44,6 +59,7 @@ class LoadTurnipsData extends React.Component {
         this.useSample = this.useSample.bind(this)
         this.openDataFileSelection = this.openDataFileSelection.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.parseAndOpenJsonFile = this.parseAndOpenJsonFile.bind(this)
         this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
         this.reportError = this.reportError.bind(this)
         this.clearError = this.clearError.bind(this)
@@ -97,6 +113,7 @@ class LoadTurnipsData extends React.Component {
     }
 
     handleChange(event) {
+        event.preventDefault()
         const turnipsFile = event.target.files[0]
         if (!turnipsFile) {
             return
@@ -105,7 +122,10 @@ class LoadTurnipsData extends React.Component {
             console.log("Not a Blob, but a %s", turnipsFile.constructor.name)
             return
         }
+        this.parseAndOpenJsonFile(turnipsFile)
+    }
 
+    parseAndOpenJsonFile(turnipsFile) {
         const reader = new FileReader()
         const turnipsTable = this.state.tableRef.current
         reader.onload = _ => {
@@ -119,7 +139,6 @@ class LoadTurnipsData extends React.Component {
             turnipsTable.setState({errorMessage: `could not read file: ${error.message}`})
         }
         reader.readAsText(turnipsFile)
-        event.preventDefault()
     }
 
     parseAndOpenJson(text) {
