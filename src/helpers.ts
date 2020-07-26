@@ -5,13 +5,13 @@
  * @param {string} b
  * @return {int} 1 if a is greater than b, -1 if the opposite, 0 if they are equal, Number.MIN_SAFE_INTEGER if input is invalid
  */
-export function compareDates(a, b) {
-    if (!a || !b || typeof a !== "string" || typeof b !== "string") {
+export function compareDates(a: string, b: string) {
+    if (!a || !b) {
         return Number.MIN_SAFE_INTEGER
     }
 
     if (a === b) {
-        // Shortcut as they are already equal as strings
+        // Shortcut if they are already equal as strings
         return 0
     }
 

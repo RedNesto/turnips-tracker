@@ -1,28 +1,34 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import './App.css'
 import {compareDates} from './helpers'
 import {defaults as ChartsDefaults, Line as LineChart} from 'react-chartjs-2'
 import moment from 'moment'
 
 function App() {
-    const dataLoaderRef = React.createRef()
-    const tableRef = React.createRef()
-    const priceChartRef = React.createRef()
-    const profitChartRef = React.createRef()
-    const entryEditorRef = React.createRef()
+    const dataLoaderRef = React.createRef<LoadTurnipsData>()
+    const tableRef = React.createRef<TurnipsTable>()
+    const priceChartRef = React.createRef<LineChart>()
+    const priceChartContainerRef = React.createRef<HTMLDivElement>()
+    const profitChartRef = React.createRef<LineChart>()
+    const profitChartContainerRef = React.createRef<HTMLDivElement>()
+    const entryEditorRef = React.createRef<EntryEditor>()
 
     ChartsDefaults.global.maintainAspectRatio = false
     handleWindowDND(dataLoaderRef)
 
     return (
         <div>
-            <LoadTurnipsData ref={dataLoaderRef} tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef} entryEditorRef={entryEditorRef}/>
-            <EntryEditor ref={entryEditorRef} tableRef={tableRef} priceChartRef={priceChartRef} profitChartRef={profitChartRef}/>
-            <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
+            <LoadTurnipsData ref={dataLoaderRef} tableRef={tableRef}
+                             priceChartRef={priceChartRef} priceChartContainerRef={priceChartContainerRef}
+                             profitChartRef={profitChartRef} profitChartContainerRef={profitChartContainerRef}
+                             entryEditorRef={entryEditorRef}/>
+            <EntryEditor ref={entryEditorRef} tableRef={tableRef}
+                         priceChartRef={priceChartRef} priceChartContainerRef={priceChartContainerRef}
+                         profitChartRef={profitChartRef} profitChartContainerRef={profitChartContainerRef}/>
+            <div ref={priceChartContainerRef} style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
                 <LineChart ref={priceChartRef} data={{}}/>
             </div>
-            <div style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
+            <div ref={profitChartContainerRef} style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
                 <LineChart ref={profitChartRef} data={{}}/>
             </div>
             <TurnipsTable ref={tableRef}/>
@@ -30,40 +36,30 @@ function App() {
     )
 }
 
-function handleWindowDND(dataLoaderRef) {
+function handleWindowDND(dataLoaderRef: React.RefObject<LoadTurnipsData>) {
     window.addEventListener('dragover', event => event.preventDefault())
     window.addEventListener('drop', event => {
         event.preventDefault()
-        let file = event.dataTransfer.files[0]
+        let file = event.dataTransfer!.files[0]
         if (file) {
-            dataLoaderRef.current.parseAndOpenJsonFile(file)
+            dataLoaderRef.current!.parseAndOpenJsonFile(file)
         }
     })
 }
 
 export default App
 
-class LoadTurnipsData extends React.Component {
+type LoadTurnipsDataProps = {
+    tableRef: React.RefObject<TurnipsTable>
+    priceChartContainerRef: React.RefObject<HTMLDivElement>
+    priceChartRef: React.RefObject<LineChart>
+    profitChartContainerRef: React.RefObject<HTMLDivElement>
+    profitChartRef: React.RefObject<LineChart>
+    entryEditorRef: React.RefObject<EntryEditor>
+}
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            tableRef: props.tableRef,
-            priceChartRef: props.priceChartRef,
-            profitChartRef: props.profitChartRef,
-            entryEditorRef: props.entryEditorRef,
-        }
-
-        this.createNewData = this.createNewData.bind(this)
-        this.clearData = this.clearData.bind(this)
-        this.useSample = this.useSample.bind(this)
-        this.openDataFileSelection = this.openDataFileSelection.bind(this)
-        this.handleChange = this.handleChange.bind(this)
-        this.parseAndOpenJsonFile = this.parseAndOpenJsonFile.bind(this)
-        this.parseAndOpenJson = this.parseAndOpenJson.bind(this)
-        this.reportError = this.reportError.bind(this)
-        this.clearError = this.clearError.bind(this)
-    }
+class LoadTurnipsData extends React.Component<LoadTurnipsDataProps, {}> {
+    private turnipsFileInputRef = React.createRef<HTMLInputElement>()
 
     render() {
         return (
@@ -71,29 +67,28 @@ class LoadTurnipsData extends React.Component {
                 <button onClick={this.createNewData}>New Turnips Data</button>
                 <button onClick={this.openDataFileSelection}>Select Turnips Data</button>
                 <input type="file" id="turnips-file" onChange={this.handleChange}
-                       style={{width: 0, height: 0}} ref={ref => this.turnipsFileInput = ref}/>
+                       style={{width: 0, height: 0}} ref={this.turnipsFileInputRef}/>
                 <button onClick={this.useSample}>Open Sample</button>
                 <button onClick={this.clearData}>Clear</button>
             </form>
         )
     }
 
-    createNewData(event) {
+    createNewData = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault()
-        this.state.entryEditorRef.current.setState({hidden: false})
+        this.props.entryEditorRef.current!.setState({hidden: false})
     }
 
-    clearData(event) {
+    clearData = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault()
-        const turnipsPriceChart = this.state.priceChartRef.current
-        const turnipsProfitChart = this.state.profitChartRef.current
-        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.setProperty('display', 'none')
-        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.setProperty('display', 'none')
-        this.state.tableRef.current.setState({entries: []})
-        this.state.entryEditorRef.current.setState({hidden: true})
+        this.props.priceChartContainerRef.current!.style.setProperty('display', 'none')
+        this.props.profitChartContainerRef.current!.style.setProperty('display', 'none')
+        this.props.tableRef.current!.setState({entries: []})
+        this.props.entryEditorRef.current!.setState({hidden: true})
     }
 
-    useSample(event) {
+    useSample = (event: React.SyntheticEvent) => {
+        event.preventDefault()
         fetch("/turnips-tracker/sample.json")
             .then(response => {
                 if (!response.ok) {
@@ -102,46 +97,46 @@ class LoadTurnipsData extends React.Component {
                 }
 
                 return response.text()
-            }).then(this.parseAndOpenJson)
-        event.preventDefault()
+            }).then((text: string | undefined) => this.parseAndOpenJson(text as string))
     }
 
-    openDataFileSelection(event) {
+    openDataFileSelection = (event: React.SyntheticEvent) => {
         event.preventDefault()
-        this.turnipsFileInput.value = ''
-        this.turnipsFileInput.click()
+        const fileInput = this.turnipsFileInputRef.current!
+        fileInput.value = ''
+        fileInput.click()
     }
 
-    handleChange(event) {
+    handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        const turnipsFile = event.target.files[0]
+        const turnipsFile = event.target?.files?.item(0)
         if (!turnipsFile) {
             return
         }
         if (!(turnipsFile instanceof Blob)) {
-            console.log("Not a Blob, but a %s", turnipsFile.constructor.name)
+            console.log("Not a Blob, but a %s", typeof turnipsFile)
             return
         }
         this.parseAndOpenJsonFile(turnipsFile)
     }
 
-    parseAndOpenJsonFile(turnipsFile) {
+    parseAndOpenJsonFile = (turnipsFile: Blob) => {
         const reader = new FileReader()
-        const turnipsTable = this.state.tableRef.current
+        const turnipsTable = this.props.tableRef.current!
         reader.onload = _ => {
             const text = reader.result
-            console.assert(typeof text === "string", "readAsText did not return a String result but a %s of value %s", text.constructor.name, text)
-            this.parseAndOpenJson(text)
+            console.assert(typeof text === "string", "readAsText did not return a String result but a %s of value %s", text?.constructor.name, text)
+            this.parseAndOpenJson(text as string)
         }
         reader.onerror = _ => {
             const error = reader.error
             console.error("Error occurred when reading turnips data file: %s", error)
-            turnipsTable.setState({errorMessage: `could not read file: ${error.message}`})
+            turnipsTable.setState({errorMessage: `could not read file: ${error?.message}`})
         }
         reader.readAsText(turnipsFile)
     }
 
-    parseAndOpenJson(text) {
+    parseAndOpenJson = (text: string) => {
         try {
             const parsed = JSON.parse(text)
             this.openJson(parsed)
@@ -155,51 +150,60 @@ class LoadTurnipsData extends React.Component {
         }
     }
 
-    openJson(json) {
-        const turnipsPriceChart = this.state.priceChartRef.current
-        const turnipsProfitChart = this.state.profitChartRef.current
-        const turnipsTable = this.state.tableRef.current
-        turnipsTable.setState({entries: json})
+    openJson = (json: Array<TurnipsEntry>) => {
+        this.props.tableRef.current!.setState({entries: json})
+        const turnipsPriceChart = this.props.priceChartRef.current!
         turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(json)
         turnipsPriceChart.chartInstance.update()
-        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
+        this.props.priceChartContainerRef.current!.style.removeProperty('display')
+        const turnipsProfitChart = this.props.profitChartRef.current!
         turnipsProfitChart.chartInstance.data = createProfitChartData(json)
         turnipsProfitChart.chartInstance.update()
-        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
+        this.props.profitChartContainerRef.current!.style.removeProperty('display')
 
         this.clearError()
     }
 
-    reportError(errorMessage) {
-        const turnipsTable = this.state.tableRef.current
-        turnipsTable.setState({errorMessage: errorMessage})
-    }
+    reportError = (errorMessage: string) => this.props.tableRef.current!.setState({errorMessage: errorMessage})
 
-    clearError() {
-        const turnipsTable = this.state.tableRef.current
-        turnipsTable.setState({errorMessage: null})
-    }
+    clearError = () => this.props.tableRef.current!.setState({errorMessage: undefined})
 }
 
-class EntryEditor extends React.Component {
+enum DayHalf {
+    MORNING = 'morning',
+    AFTERNOON = 'afternoon'
+}
 
-    constructor(props) {
+type EntryEditorProps = {
+    tableRef: React.RefObject<TurnipsTable>
+    priceChartRef: React.RefObject<LineChart>
+    priceChartContainerRef: React.RefObject<HTMLDivElement>
+    profitChartRef: React.RefObject<LineChart>
+    profitChartContainerRef: React.RefObject<HTMLDivElement>
+    hidden?: boolean
+}
+
+type EntryEditorState = {
+    hidden: boolean
+    formValid: boolean
+    date: string
+    half: DayHalf
+    price: number
+    quantity: number
+}
+
+class EntryEditor extends React.Component<EntryEditorProps, EntryEditorState> {
+
+    constructor(props: EntryEditorProps) {
         super(props)
         this.state = {
-            tableRef: props.tableRef,
-            priceChartRef: props.priceChartRef,
-            profitChartRef: props.profitChartRef,
-            hidden: true,
+            hidden: props.hidden ?? false,
             formValid: false,
             date: '',
-            half: 'morning',
+            half: DayHalf.MORNING,
             price: 0,
-            quantity: 0,
+            quantity: 0
         }
-
-        this.validateForm = this.validateForm.bind(this)
-        this.handleInputChange = this.handleInputChange.bind(this)
-        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
     render() {
@@ -229,17 +233,17 @@ class EntryEditor extends React.Component {
         )
     }
 
-    validateForm() {
-        return this.state.date.length !== 0
+    validateForm = () => this.state.date.length !== 0
+
+    handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const {name, value} = event.currentTarget
+        this.setState({
+            [name]: value,
+            formValid: this.validateForm()
+        } as any)
     }
 
-    handleInputChange(event) {
-        const target = event.target
-        const value = target.type === 'number' ? parseInt(target.value) : target.value
-        this.setState({[target.name]: value, formValid: this.validateForm()})
-    }
-
-    handleSubmit(event) {
+    handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         if (!this.state.formValid) {
             return
@@ -251,30 +255,42 @@ class EntryEditor extends React.Component {
         const quantity = this.state.quantity
         const entry = isSunday(date) ? {date: date, bought: quantity, price: price} : {date: date, half: half, sold: quantity, price: price}
 
-        const turnipsTable = this.state.tableRef.current
+        const turnipsTable = this.props.tableRef.current!
         turnipsTable.addEntry(entry)
-        const turnipsPriceChart = this.state.priceChartRef.current
-        const turnipsProfitChart = this.state.profitChartRef.current
         const entries = turnipsTable.state.entries
+        const turnipsPriceChart = this.props.priceChartRef.current!
         turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(entries)
         turnipsPriceChart.chartInstance.update()
-        ReactDOM.findDOMNode(turnipsPriceChart).parentNode.style.removeProperty('display')
+        this.props.priceChartContainerRef.current!.style.removeProperty('display')
+        const turnipsProfitChart = this.props.profitChartRef.current!
         turnipsProfitChart.chartInstance.data = createProfitChartData(entries)
         turnipsProfitChart.chartInstance.update()
-        ReactDOM.findDOMNode(turnipsProfitChart).parentNode.style.removeProperty('display')
+        this.props.profitChartContainerRef.current!.style.removeProperty('display')
     }
 }
 
-class TurnipsTable extends React.Component {
+type TurnipsEntry = {
+    date: string,
+    half?: DayHalf,
+    bought?: number,
+    sold?: number
+    price: number
+}
 
-    constructor(props) {
-        super(props)
+type TurnipsTableState = {
+    entries: Array<TurnipsEntry>
+    errorMessage?: string
+}
 
-        this.addEntry = this.addEntry.bind(this)
+class TurnipsTable extends React.Component<{}, TurnipsTableState> {
+
+    constructor() {
+        super({});
+        this.state = {entries: []}
     }
 
-    addEntry(entry) {
-        const entries = this.state?.entries ?? []
+    addEntry = (entry: TurnipsEntry) => {
+        const entries = this.state.entries
 
         const key = createTurnipsKey(entry)
         const existingEntryIndex = entries.findIndex(value => createTurnipsKey(value) === key)
@@ -283,7 +299,7 @@ class TurnipsTable extends React.Component {
         } else {
             entries[existingEntryIndex] = entry
         }
-        this.setState({entries: entries})
+        this.setState({entries: entries.sort(turnipsEntriesSort)})
     }
 
     render() {
@@ -320,7 +336,7 @@ class TurnipsTable extends React.Component {
     }
 }
 
-function TurnipsTableRow(props) {
+function TurnipsTableRow(props: TurnipsEntry) {
     let detail
     let formattedCount
     const bought = props.bought
@@ -360,25 +376,25 @@ function TurnipsTableRow(props) {
     )
 }
 
-function createTurnipsKey(entry) {
+function createTurnipsKey(entry: TurnipsEntry) {
     return entry.date + '-' + entry.half
 }
 
-function turnipsEntriesSort(a, b) {
+function turnipsEntriesSort(a: TurnipsEntry, b: TurnipsEntry) {
     if (a.date === b.date) {
-        return a.half === "morning" && b.half === "afternoon" ? -1 : 1
+        return a.half === DayHalf.MORNING && b.half === DayHalf.AFTERNOON ? -1 : 1
     }
     return compareDates(a.date, b.date)
 }
 
-function createTurnipsNumberChartData(jsonData) {
-    let dayLabels = []
-    let sellingPriceData = []
-    let buyingPriceData = []
-    jsonData.forEach(entry => {
+function createTurnipsNumberChartData(entries: Array<TurnipsEntry>) {
+    let dayLabels: Array<string> = []
+    let sellingPriceData: Array<number | null> = []
+    let buyingPriceData: Array<number | null> = []
+    entries.forEach(entry => {
         const price = entry.price
         if (entry.sold != null) {
-            const shortHalf = entry.half === 'morning' ? 'am' : 'pm'
+            const shortHalf = entry.half === DayHalf.MORNING ? 'am' : 'pm'
             dayLabels.push(entry.date + shortHalf)
             sellingPriceData.push(price)
             buyingPriceData.push(null)
@@ -389,7 +405,7 @@ function createTurnipsNumberChartData(jsonData) {
         }
     })
 
-    function dataset(label, data, color) {
+    function dataset(label: string, data: Array<number | null>, color: string) {
         return {
             label: label,
             data: data,
@@ -419,12 +435,12 @@ function createTurnipsNumberChartData(jsonData) {
     }
 }
 
-function createProfitChartData(jsonData) {
-    let weekLabels = []
-    let weekProfits = []
+function createProfitChartData(entries: Array<TurnipsEntry>) {
+    let weekLabels: Array<string> = []
+    let weekProfits: Array<number> = []
     let weekBought = 0
     let weekSold = 0
-    jsonData.sort(turnipsEntriesSort).forEach(entry => {
+    entries.sort(turnipsEntriesSort).forEach(entry => {
         if (entry.sold != null) {
             if (weekLabels.length === 0) {
                 // Skip sold values that are not in a cycle (starting sunday)
@@ -437,8 +453,9 @@ function createProfitChartData(jsonData) {
                 weekProfits.push(weekSold - weekBought)
             }
 
+            const bought = entry.bought ?? 0;
             weekLabels.push(entry.date)
-            weekBought = entry.bought * entry.price
+            weekBought = bought * entry.price
             weekSold = 0
         }
     })
@@ -456,10 +473,10 @@ function createProfitChartData(jsonData) {
     }
 }
 
-function dayForDate(date) {
+function dayForDate(date: string) {
     return moment(date, 'yyyy-MM-DD').format('dddd')
 }
 
-function isSunday(date) {
+function isSunday(date: string) {
     return moment(date, 'yyyy-MM-DD').weekday() === 0
 }
