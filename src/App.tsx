@@ -22,7 +22,7 @@ function App() {
                              priceChartRef={priceChartRef} priceChartContainerRef={priceChartContainerRef}
                              profitChartRef={profitChartRef} profitChartContainerRef={profitChartContainerRef}
                              entryEditorRef={entryEditorRef}/>
-            <EntryEditor ref={entryEditorRef} tableRef={tableRef}
+            <EntryEditor ref={entryEditorRef} hidden={true} tableRef={tableRef}
                          priceChartRef={priceChartRef} priceChartContainerRef={priceChartContainerRef}
                          profitChartRef={profitChartRef} profitChartContainerRef={profitChartContainerRef}/>
             <div ref={priceChartContainerRef} style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
@@ -31,7 +31,7 @@ function App() {
             <div ref={profitChartContainerRef} style={{display: 'none', position: 'relative', height: '40vh', width: '95vw'}}>
                 <LineChart ref={profitChartRef} data={{}}/>
             </div>
-            <TurnipsTable ref={tableRef}/>
+            <TurnipsTable ref={tableRef} visible={false}/>
         </div>
     )
 }
@@ -277,16 +277,24 @@ type TurnipsEntry = {
     price: number
 }
 
+type TurnipsTableProps = {
+    visible?: boolean
+}
+
 type TurnipsTableState = {
     entries: Array<TurnipsEntry>
     errorMessage?: string
+    visible: boolean
 }
 
-class TurnipsTable extends React.Component<{}, TurnipsTableState> {
+class TurnipsTable extends React.Component<TurnipsTableProps, TurnipsTableState> {
 
-    constructor() {
-        super({});
-        this.state = {entries: []}
+    constructor(props: TurnipsTableProps) {
+        super(props);
+        this.state = {
+            entries: [],
+            visible: props.visible ?? true
+        }
     }
 
     addEntry = (entry: TurnipsEntry) => {
@@ -312,28 +320,46 @@ class TurnipsTable extends React.Component<{}, TurnipsTableState> {
             return (<p>Error when reading the turnips data: {errorMessage}</p>)
         }
 
-        const turnipsEntries = this.state.entries.sort(turnipsEntriesSort)
-
-        if (turnipsEntries.length === 0) {
-            return (<p>No Turnips Data Loaded</p>)
+        const isVisible = this.state.visible;
+        if (this.state.entries.length === 0) {
+            return isVisible ? (<p>No Turnips Data Loaded</p>) : (<div/>)
         }
+
+        const visibilityToggle = (
+            <label>
+                <input type={"checkbox"} name={"visible"} onChange={this.handleVisibilityCheckbox} checked={isVisible}/>
+                Show Detailed Table
+            </label>
+        )
+
+        if (!isVisible) {
+            // No need to compute the table content if it is not visible
+            return (<div>{visibilityToggle}</div>)
+        }
+
+        const turnipsEntries = this.state.entries.sort(turnipsEntriesSort)
         const turnipsRows = turnipsEntries.map(entry => TurnipsTableRow(entry))
         return (
-            <table id="turnips-table">
-                <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Price</th>
-                    <th>Bought / Sold</th>
-                    <th>Detail</th>
-                </tr>
-                </thead>
-                <tbody>
-                {turnipsRows}
-                </tbody>
-            </table>
+            <div>
+                {visibilityToggle}
+                <table id="turnips-table">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Bought / Sold</th>
+                        <th>Detail</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {turnipsRows}
+                    </tbody>
+                </table>
+            </div>
         )
     }
+
+    handleVisibilityCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({visible: event.target.checked})
 }
 
 function TurnipsTableRow(props: TurnipsEntry) {
