@@ -25,9 +25,6 @@ it('should sort completely different dates correctly', function () {
 })
 
 it('should handle malformed input', function () {
-    expect(compareDates(null, null)).toEqual(Number.MIN_SAFE_INTEGER)
-    expect(compareDates(null, "2020-05-28")).toEqual(Number.MIN_SAFE_INTEGER)
-    expect(compareDates("2020-05-28", null)).toEqual(Number.MIN_SAFE_INTEGER)
     expect(compareDates("2020-05-28", "05-28")).toEqual(Number.MIN_SAFE_INTEGER)
     expect(compareDates("2020-05-28", "-05-28")).toEqual(Number.MIN_SAFE_INTEGER)
     expect(compareDates("2020-05-28", "-05-28")).toEqual(Number.MIN_SAFE_INTEGER)
