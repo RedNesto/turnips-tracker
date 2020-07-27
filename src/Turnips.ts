@@ -1,8 +1,8 @@
 import {compareDates} from "./helpers";
 
 export enum DayHalf {
-    MORNING = 'morning',
-    AFTERNOON = 'afternoon'
+    Morning = 'morning',
+    Afternoon = 'afternoon'
 }
 
 export type TurnipsEntry = {
@@ -17,9 +17,9 @@ export function createTurnipsKey(entry: TurnipsEntry) {
     return entry.date + '-' + entry.half
 }
 
-export function turnipsEntriesSort(a: TurnipsEntry, b: TurnipsEntry) {
+export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry) {
     if (a.date === b.date) {
-        return a.half === DayHalf.MORNING && b.half === DayHalf.AFTERNOON ? -1 : 1
+        return a.half === DayHalf.Morning && b.half === DayHalf.Afternoon ? -1 : 1
     }
     return compareDates(a.date, b.date)
 }
@@ -31,7 +31,7 @@ export function createTurnipsNumberChartData(entries: Array<TurnipsEntry>) {
     entries.forEach(entry => {
         const price = entry.price
         if (entry.sold != null) {
-            const shortHalf = entry.half === DayHalf.MORNING ? 'am' : 'pm'
+            const shortHalf = entry.half === DayHalf.Morning ? 'am' : 'pm'
             dayLabels.push(entry.date + shortHalf)
             sellingPriceData.push(price)
             buyingPriceData.push(null)
@@ -77,7 +77,7 @@ export function createProfitChartData(entries: Array<TurnipsEntry>) {
     let weekProfits: Array<number> = []
     let weekBought = 0
     let weekSold = 0
-    entries.sort(turnipsEntriesSort).forEach(entry => {
+    entries.sort(sortTurnipsEntries).forEach(entry => {
         if (entry.sold != null) {
             if (weekLabels.length === 0) {
                 // Skip sold values that are not in a cycle (starting sunday)

@@ -17,7 +17,7 @@ export default function App() {
     const entryEditorRef = React.createRef<EntryEditor>()
 
     ChartsDefaults.global.maintainAspectRatio = false
-    handleWindowDND(dataLoaderRef)
+    setupWindowDND(dataLoaderRef)
 
     return (
         <div>
@@ -39,7 +39,7 @@ export default function App() {
     )
 }
 
-function handleWindowDND(dataLoaderRef: React.RefObject<LoadTurnipsData>) {
+function setupWindowDND(dataLoaderRef: React.RefObject<LoadTurnipsData>) {
     window.addEventListener('dragover', event => event.preventDefault())
     window.addEventListener('drop', event => {
         event.preventDefault()

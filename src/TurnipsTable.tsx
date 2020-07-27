@@ -1,7 +1,7 @@
 import React from "react";
 
 import {dayForDate} from "./helpers";
-import {createTurnipsKey, turnipsEntriesSort, TurnipsEntry} from "./Turnips";
+import {createTurnipsKey, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
 
 type TurnipsTableProps = {
     visible?: boolean
@@ -33,7 +33,7 @@ export default class TurnipsTable extends React.Component<TurnipsTableProps, Tur
         } else {
             entries[existingEntryIndex] = entry
         }
-        this.setState({entries: entries.sort(turnipsEntriesSort)})
+        this.setState({entries: entries.sort(sortTurnipsEntries)})
     }
 
     render() {
@@ -63,7 +63,7 @@ export default class TurnipsTable extends React.Component<TurnipsTableProps, Tur
             return (<div>{visibilityToggle}</div>)
         }
 
-        const turnipsEntries = this.state.entries.sort(turnipsEntriesSort)
+        const turnipsEntries = this.state.entries.sort(sortTurnipsEntries)
         const turnipsRows = turnipsEntries.map(entry => TurnipsTableRow(entry))
         return (
             <div>

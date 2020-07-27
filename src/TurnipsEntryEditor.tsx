@@ -32,7 +32,7 @@ export default class EntryEditor extends React.Component<EntryEditorProps, Entry
             hidden: props.hidden ?? false,
             formValid: false,
             date: '',
-            half: DayHalf.MORNING,
+            half: DayHalf.Morning,
             price: 0,
             quantity: 0
         }
