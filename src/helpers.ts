@@ -1,3 +1,5 @@
+import moment from "moment";
+
 /**
  * Compares two dates stored in string in the format 'year-month-day'
  *
@@ -35,4 +37,12 @@ export function compareDates(a: string, b: string) {
     }
 
     return 0
+}
+
+export function dayForDate(date: string) {
+    return moment(date, 'yyyy-MM-DD').format('dddd')
+}
+
+export function isSunday(date: string) {
+    return moment(date, 'yyyy-MM-DD').weekday() === 0
 }
