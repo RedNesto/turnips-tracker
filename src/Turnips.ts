@@ -1,4 +1,4 @@
-import {compareDates} from "./helpers";
+import {compareDates, isSunday} from "./helpers";
 
 export enum DayHalf {
     Morning = 'morning',
@@ -18,6 +18,61 @@ export function createTurnipsKey(entry: TurnipsEntry): string {
         return entry.date + '-' + entry.half
     }
     return entry.date
+}
+
+export class TurnipsNormalizationError extends Error {
+    public readonly reason: TurnipsNormalizationErrorReason
+
+    constructor(reason: TurnipsNormalizationErrorReason, entry: TurnipsEntry, message?: string) {
+        super(message ?? `Could not normalize TurnipsEntry: ${reason} (${entry})`);
+        this.reason = reason
+    }
+}
+
+export enum TurnipsNormalizationErrorReason {
+    DayHalfExpected = 'DayHalf expected'
+}
+
+export function normalizeTurnipsEntry(entry: TurnipsEntry): TurnipsEntry {
+    const sunday = isSunday(entry.date);
+    if (!sunday && !entry.half) {
+        throw new TurnipsNormalizationError(TurnipsNormalizationErrorReason.DayHalfExpected, entry)
+    }
+
+    return {
+        date: entry.date,
+        half: !sunday ? entry.half : undefined,
+        bought: sunday ? safeParseIntDecimal(entry.bought) : undefined,
+        sold: !sunday ? safeParseIntDecimal(entry.sold) : undefined,
+        price: safeParseIntDecimal(entry.price)
+    }
+}
+
+/**
+ * A convenient wrapper around {@link parseInt}, returns 0 if the input is invalid.
+ *
+ * The input is valid if it is a number (for convenience) or a string representing a decimal integer
+ *
+ * The input is invalid if `undefined` or the string does not represent a decimal integer and is not finite
+ *
+ * @param value a decimal string or a number (for convenience)
+ * @returns the number if a valid decimal integer, 0 otherwise
+ */
+function safeParseIntDecimal(value?: string | number): number {
+    if (!value) {
+        return 0
+    }
+
+    if (typeof value === 'number') {
+        return value
+    }
+
+    const parsed = parseInt(value, 10)
+    if (isNaN(parsed) || !isFinite(parsed)) {
+        return 0
+    }
+
+    return parsed
 }
 
 export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry): number {

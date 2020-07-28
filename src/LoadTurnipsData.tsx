@@ -1,7 +1,7 @@
 import React from "react";
 import {Line as LineChart} from "react-chartjs-2";
 
-import {createProfitChartData, createTurnipsNumberChartData, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
+import {createProfitChartData, createTurnipsNumberChartData, normalizeTurnipsEntry, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
 
 import TurnipsTable from './TurnipsTable'
 import EntryEditor from './TurnipsEntryEditor'
@@ -72,7 +72,7 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
     downloadData = (event: React.SyntheticEvent) => {
         event.preventDefault()
         const entries = this.props.tableRef.current!.state.entries.sort(sortTurnipsEntries);
-        const prettifiedJson = JSON.stringify(entries, null, 4);
+        const prettifiedJson = JSON.stringify(entries, null, 2);
         const uriFriendlyData = encodeURIComponent(prettifiedJson);
 
         const fakeLinkElement = this.downloadDataFakeLinkRef.current!;
@@ -116,21 +116,22 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
         } catch (error) {
             console.error("Error occurred when opening turnips data: %s", error)
             let errorMessage = "more details in the console"
-            if (error instanceof SyntaxError) {
+            if (error instanceof Error) {
                 errorMessage = error.message
             }
             this.reportError(errorMessage)
         }
     }
 
-    openJson = (json: Array<TurnipsEntry>) => {
-        this.props.tableRef.current!.setState({entries: json})
+    openJson = (entries: Array<TurnipsEntry>) => {
+        let normalizedEntries = entries.map(normalizeTurnipsEntry);
+        this.props.tableRef.current!.setState({entries: normalizedEntries})
         const turnipsPriceChart = this.props.priceChartRef.current!
-        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(json)
+        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(normalizedEntries)
         turnipsPriceChart.chartInstance.update()
         this.props.priceChartContainerRef.current!.style.removeProperty('display')
         const turnipsProfitChart = this.props.profitChartRef.current!
-        turnipsProfitChart.chartInstance.data = createProfitChartData(json)
+        turnipsProfitChart.chartInstance.data = createProfitChartData(normalizedEntries)
         turnipsProfitChart.chartInstance.update()
         this.props.profitChartContainerRef.current!.style.removeProperty('display')
 

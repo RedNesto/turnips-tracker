@@ -1,7 +1,7 @@
 import React from "react";
 
 import {dayForDate} from "./helpers";
-import {createTurnipsKey, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
+import {createTurnipsKey, normalizeTurnipsEntry, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
 
 type TurnipsTableProps = {
     visible?: boolean
@@ -24,14 +24,24 @@ export default class TurnipsTable extends React.Component<TurnipsTableProps, Tur
     }
 
     addEntry = (entry: TurnipsEntry) => {
-        const entries = this.state.entries
+        let normalizedEntry: TurnipsEntry
+        try {
+            normalizedEntry = normalizeTurnipsEntry(entry)
+        } catch (e) {
+            console.error('Failed to create TurnipsEntry: ' + e)
+            if (e instanceof Error) {
+                this.setState({errorMessage: 'Failed to create TurnipsEntry: ' + e.message})
+            }
+            return
+        }
 
-        const key = createTurnipsKey(entry)
+        const entries = this.state.entries
+        const key = createTurnipsKey(normalizedEntry)
         const existingEntryIndex = entries.findIndex(value => createTurnipsKey(value) === key)
         if (existingEntryIndex < 0) {
-            entries.push(entry)
+            entries.push(normalizedEntry)
         } else {
-            entries[existingEntryIndex] = entry
+            entries[existingEntryIndex] = normalizedEntry
         }
         this.setState({entries: entries.sort(sortTurnipsEntries)})
     }
