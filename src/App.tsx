@@ -45,7 +45,7 @@ function setupWindowDND(dataLoaderRef: React.RefObject<LoadTurnipsData>) {
         event.preventDefault()
         let file = event.dataTransfer!.files[0]
         if (file) {
-            dataLoaderRef.current!.parseAndOpenJsonFile(file)
+            dataLoaderRef.current!.openAndParseJsonFile(file)
         }
     })
 }

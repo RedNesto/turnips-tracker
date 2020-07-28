@@ -1,7 +1,7 @@
 import React from "react";
 import {Line as LineChart} from "react-chartjs-2";
 
-import {createProfitChartData, createTurnipsNumberChartData, TurnipsEntry} from "./Turnips";
+import {createProfitChartData, createTurnipsNumberChartData, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
 
 import TurnipsTable from './TurnipsTable'
 import EntryEditor from './TurnipsEntryEditor'
@@ -17,6 +17,7 @@ type LoadTurnipsDataProps = {
 
 export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProps, {}> {
     private turnipsFileInputRef = React.createRef<HTMLInputElement>()
+    private downloadDataFakeLinkRef = React.createRef<HTMLAnchorElement>()
 
     render() {
         return (
@@ -25,6 +26,9 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
                 <button onClick={this.openDataFileSelection}>Select Turnips Data</button>
                 <input type="file" id="turnips-file" onChange={this.handleChange}
                        style={{width: 0, height: 0}} ref={this.turnipsFileInputRef}/>
+                <button onClick={this.downloadData}>Save Turnips Data</button>
+                {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
+                <a download="turnips-data.json" style={{width: 0, height: 0}} ref={this.downloadDataFakeLinkRef}/>
                 <button onClick={this.useSample}>Open Sample</button>
                 <button onClick={this.clearData}>Clear</button>
             </form>
@@ -60,8 +64,20 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
     openDataFileSelection = (event: React.SyntheticEvent) => {
         event.preventDefault()
         const fileInput = this.turnipsFileInputRef.current!
+        // Reset the input's value so we can select the same file twice in a row
         fileInput.value = ''
         fileInput.click()
+    }
+
+    downloadData = (event: React.SyntheticEvent) => {
+        event.preventDefault()
+        const entries = this.props.tableRef.current!.state.entries.sort(sortTurnipsEntries);
+        const prettifiedJson = JSON.stringify(entries, null, 4);
+        const uriFriendlyData = encodeURIComponent(prettifiedJson);
+
+        const fakeLinkElement = this.downloadDataFakeLinkRef.current!;
+        fakeLinkElement.setAttribute('href', 'data:text/plain;charset:utf-8,' + uriFriendlyData)
+        fakeLinkElement.click()
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,10 +90,10 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
             console.log("Not a Blob, but a %s", typeof turnipsFile)
             return
         }
-        this.parseAndOpenJsonFile(turnipsFile)
+        this.openAndParseJsonFile(turnipsFile)
     }
 
-    parseAndOpenJsonFile = (turnipsFile: Blob) => {
+    openAndParseJsonFile = (turnipsFile: Blob) => {
         const reader = new FileReader()
         const turnipsTable = this.props.tableRef.current!
         reader.onload = _ => {
