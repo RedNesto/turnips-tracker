@@ -1,7 +1,7 @@
 import React from "react";
 import {Line as LineChart} from "react-chartjs-2";
 
-import {isSunday} from './helpers'
+import {formatDate, isSunday} from './helpers'
 import {createProfitChartData, createTurnipsNumberChartData, DayHalf, TurnipsEntry} from "./Turnips";
 
 import TurnipsTable from './TurnipsTable'
@@ -28,11 +28,12 @@ export default class EntryEditor extends React.Component<EntryEditorProps, Entry
 
     constructor(props: EntryEditorProps) {
         super(props)
+        const now = new Date();
         this.state = {
             hidden: props.hidden ?? false,
-            formValid: false,
-            date: '',
-            half: DayHalf.Morning,
+            formValid: true,
+            date: formatDate(now),
+            half: now.getHours() < 12 ? DayHalf.Morning : DayHalf.Afternoon,
             price: 0,
             quantity: 0
         }
@@ -65,14 +66,11 @@ export default class EntryEditor extends React.Component<EntryEditorProps, Entry
         )
     }
 
-    validateForm = () => this.state.date.length !== 0
+    validateForm = () => this.setState({formValid: this.state.date.length !== 0})
 
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const {name, value} = event.currentTarget
-        this.setState({
-            [name]: value,
-            formValid: this.validateForm()
-        } as any)
+        this.setState({[name]: value} as any, this.validateForm)
     }
 
     handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
