@@ -2,7 +2,7 @@ import React from "react";
 import {Line as LineChart} from "react-chartjs-2";
 
 import {isSunday} from './helpers'
-import {createProfitChartData, createTurnipsNumberChartData, DayHalf} from "./Turnips";
+import {createProfitChartData, createTurnipsNumberChartData, DayHalf, TurnipsEntry} from "./Turnips";
 
 import TurnipsTable from './TurnipsTable'
 
@@ -85,7 +85,12 @@ export default class EntryEditor extends React.Component<EntryEditorProps, Entry
         const half = this.state.half
         const price = this.state.price
         const quantity = this.state.quantity
-        const entry = isSunday(date) ? {date: date, bought: quantity, price: price} : {date: date, half: half, sold: quantity, price: price}
+        let entry: TurnipsEntry
+        if (isSunday(date)) {
+            entry = {date: date, bought: quantity, price: price};
+        } else {
+            entry = {date: date, half: half, sold: quantity, price: price};
+        }
 
         const turnipsTable = this.props.tableRef.current!
         turnipsTable.addEntry(entry)
