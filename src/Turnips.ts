@@ -82,8 +82,8 @@ export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry): number {
     return compareDates(a.date, b.date)
 }
 
-export function createTurnipsNumberChartData(entries: Array<TurnipsEntry>) {
-    let dayLabels: Array<string> = []
+export function createTurnipsNumberChartData(entries: TurnipsEntry[]) {
+    let dayLabels: string[] = []
     let sellingPriceData: Array<number | null> = []
     let buyingPriceData: Array<number | null> = []
     entries.forEach(entry => {
@@ -130,9 +130,9 @@ export function createTurnipsNumberChartData(entries: Array<TurnipsEntry>) {
     }
 }
 
-export function createProfitChartData(entries: Array<TurnipsEntry>) {
-    let weekLabels: Array<string> = []
-    let weekProfits: Array<number> = []
+export function createProfitChartData(entries: TurnipsEntry[]) {
+    let weekLabels: string[] = []
+    let weekProfits: number[] = []
     let weekBought = 0
     let weekSold = 0
     entries.sort(sortTurnipsEntries).forEach(entry => {

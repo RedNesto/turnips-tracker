@@ -38,7 +38,7 @@ it("should throw error if can't normalize", () => {
 })
 
 it('should sort turnips entries properly', () => {
-    const original: Array<TurnipsEntry> = [
+    const original: TurnipsEntry[] = [
         {date: '2020-07-01', half: DayHalf.Morning, sold: 0, price: 100},
         {date: '2020-06-30', half: DayHalf.Afternoon, sold: 0, price: 100},
         {date: '2020-06-28', bought: 0, price: 100},
@@ -48,7 +48,7 @@ it('should sort turnips entries properly', () => {
         {date: '2020-07-10', half: DayHalf.Morning, sold: 0, price: 100},
         {date: '2020-07-11', half: DayHalf.Afternoon, sold: 0, price: 100},
     ]
-    const expected: Array<TurnipsEntry> = [
+    const expected: TurnipsEntry[] = [
         {date: '2020-06-28', bought: 0, price: 100},
         {date: '2020-06-30', half: DayHalf.Morning, sold: 0, price: 100},
         {date: '2020-06-30', half: DayHalf.Afternoon, sold: 0, price: 100},

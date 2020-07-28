@@ -8,7 +8,7 @@ type TurnipsTableProps = {
 }
 
 type TurnipsTableState = {
-    entries: Array<TurnipsEntry>
+    entries: TurnipsEntry[]
     errorMessage?: string
     visible: boolean
 }

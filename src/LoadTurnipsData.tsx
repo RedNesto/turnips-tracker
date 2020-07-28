@@ -123,7 +123,7 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
         }
     }
 
-    openJson = (entries: Array<TurnipsEntry>) => {
+    openJson = (entries: TurnipsEntry[]) => {
         let normalizedEntries = entries.map(normalizeTurnipsEntry);
         this.props.tableRef.current!.setState({entries: normalizedEntries})
         const turnipsPriceChart = this.props.priceChartRef.current!
