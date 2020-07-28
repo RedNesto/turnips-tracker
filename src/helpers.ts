@@ -7,7 +7,7 @@ import moment from "moment";
  * @param {string} b
  * @return {int} 1 if a is greater than b, -1 if the opposite, 0 if they are equal, Number.MIN_SAFE_INTEGER if input is invalid
  */
-export function compareDates(a: string, b: string) {
+export function compareDates(a: string, b: string): number {
     if (!a || !b) {
         return Number.MIN_SAFE_INTEGER
     }
@@ -43,10 +43,10 @@ export function formatDate(date: Date): string {
     return moment(date).format('yyyy-MM-DD')
 }
 
-export function dayForDate(date: string) {
+export function dayForDate(date: string): string {
     return moment(date, 'yyyy-MM-DD').format('dddd')
 }
 
-export function isSunday(date: string) {
+export function isSunday(date: string): boolean {
     return moment(date, 'yyyy-MM-DD').weekday() === 0
 }

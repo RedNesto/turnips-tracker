@@ -13,11 +13,11 @@ export type TurnipsEntry = {
     price: number
 }
 
-export function createTurnipsKey(entry: TurnipsEntry) {
+export function createTurnipsKey(entry: TurnipsEntry): string {
     return entry.date + '-' + entry.half
 }
 
-export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry) {
+export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry): number {
     if (a.date === b.date) {
         return a.half === DayHalf.Morning && b.half === DayHalf.Afternoon ? -1 : 1
     }
