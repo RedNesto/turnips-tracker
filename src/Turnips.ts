@@ -14,7 +14,10 @@ export type TurnipsEntry = {
 }
 
 export function createTurnipsKey(entry: TurnipsEntry): string {
-    return entry.date + '-' + entry.half
+    if (entry.half) {
+        return entry.date + '-' + entry.half
+    }
+    return entry.date
 }
 
 export function sortTurnipsEntries(a: TurnipsEntry, b: TurnipsEntry): number {
