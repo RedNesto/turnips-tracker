@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/turnips-tracker/static/css/main.27fd15f6.chunk.css",
-    "main.js": "/turnips-tracker/static/js/main.a7723179.chunk.js",
-    "main.js.map": "/turnips-tracker/static/js/main.a7723179.chunk.js.map",
+    "main.js": "/turnips-tracker/static/js/main.60a97d7c.chunk.js",
+    "main.js.map": "/turnips-tracker/static/js/main.60a97d7c.chunk.js.map",
     "runtime-main.js": "/turnips-tracker/static/js/runtime-main.dd9a08b0.js",
     "runtime-main.js.map": "/turnips-tracker/static/js/runtime-main.dd9a08b0.js.map",
-    "static/js/2.b6a1c453.chunk.js": "/turnips-tracker/static/js/2.b6a1c453.chunk.js",
-    "static/js/2.b6a1c453.chunk.js.map": "/turnips-tracker/static/js/2.b6a1c453.chunk.js.map",
+    "static/js/2.7097abc6.chunk.js": "/turnips-tracker/static/js/2.7097abc6.chunk.js",
+    "static/js/2.7097abc6.chunk.js.map": "/turnips-tracker/static/js/2.7097abc6.chunk.js.map",
     "index.html": "/turnips-tracker/index.html",
-    "precache-manifest.608295a226321b6dc925db2ef271ac2b.js": "/turnips-tracker/precache-manifest.608295a226321b6dc925db2ef271ac2b.js",
+    "precache-manifest.aaedf5da1150e9b5b2eb81c32b2429b5.js": "/turnips-tracker/precache-manifest.aaedf5da1150e9b5b2eb81c32b2429b5.js",
     "service-worker.js": "/turnips-tracker/service-worker.js",
     "static/css/main.27fd15f6.chunk.css.map": "/turnips-tracker/static/css/main.27fd15f6.chunk.css.map",
-    "static/js/2.b6a1c453.chunk.js.LICENSE.txt": "/turnips-tracker/static/js/2.b6a1c453.chunk.js.LICENSE.txt"
+    "static/js/2.7097abc6.chunk.js.LICENSE.txt": "/turnips-tracker/static/js/2.7097abc6.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.dd9a08b0.js",
-    "static/js/2.b6a1c453.chunk.js",
+    "static/js/2.7097abc6.chunk.js",
     "static/css/main.27fd15f6.chunk.css",
-    "static/js/main.a7723179.chunk.js"
+    "static/js/main.60a97d7c.chunk.js"
   ]
 }

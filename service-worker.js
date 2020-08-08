@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/turnips-tracker/precache-manifest.608295a226321b6dc925db2ef271ac2b.js"
+  "/turnips-tracker/precache-manifest.aaedf5da1150e9b5b2eb81c32b2429b5.js"
 );
 
 self.addEventListener('message', (event) => {
