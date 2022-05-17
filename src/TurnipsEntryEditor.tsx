@@ -1,5 +1,5 @@
 import React from "react";
-import {Line as LineChart} from "react-chartjs-2";
+import {Chart} from "chart.js"
 
 import {formatDate, isSunday} from './helpers'
 import {createProfitChartData, createTurnipsNumberChartData, DayHalf, TurnipsEntry} from "./Turnips";
@@ -8,9 +8,9 @@ import TurnipsTable from './TurnipsTable'
 
 type EntryEditorProps = {
     tableRef: React.RefObject<TurnipsTable>
-    priceChartRef: React.RefObject<LineChart>
+    priceChartRef: React.RefObject<Chart<"line">>
     priceChartContainerRef: React.RefObject<HTMLDivElement>
-    profitChartRef: React.RefObject<LineChart>
+    profitChartRef: React.RefObject<Chart<"line">>
     profitChartContainerRef: React.RefObject<HTMLDivElement>
     hidden?: boolean
 }
@@ -94,12 +94,12 @@ export default class EntryEditor extends React.Component<EntryEditorProps, Entry
         turnipsTable.addEntry(entry)
         const entries = turnipsTable.state.entries
         const turnipsPriceChart = this.props.priceChartRef.current!
-        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(entries)
-        turnipsPriceChart.chartInstance.update()
+        turnipsPriceChart.data = createTurnipsNumberChartData(entries)
+        turnipsPriceChart.update()
         this.props.priceChartContainerRef.current!.style.removeProperty('display')
         const turnipsProfitChart = this.props.profitChartRef.current!
-        turnipsProfitChart.chartInstance.data = createProfitChartData(entries)
-        turnipsProfitChart.chartInstance.update()
+        turnipsProfitChart.data = createProfitChartData(entries)
+        turnipsProfitChart.update()
         this.props.profitChartContainerRef.current!.style.removeProperty('display')
     }
 }

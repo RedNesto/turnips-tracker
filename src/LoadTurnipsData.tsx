@@ -1,5 +1,5 @@
 import React from "react";
-import {Line as LineChart} from "react-chartjs-2";
+import {Chart} from "chart.js";
 
 import {createProfitChartData, createTurnipsNumberChartData, normalizeTurnipsEntry, sortTurnipsEntries, TurnipsEntry} from "./Turnips";
 
@@ -9,9 +9,9 @@ import EntryEditor from './TurnipsEntryEditor'
 type LoadTurnipsDataProps = {
     tableRef: React.RefObject<TurnipsTable>
     priceChartContainerRef: React.RefObject<HTMLDivElement>
-    priceChartRef: React.RefObject<LineChart>
+    priceChartRef: React.RefObject<Chart<"line">>
     profitChartContainerRef: React.RefObject<HTMLDivElement>
-    profitChartRef: React.RefObject<LineChart>
+    profitChartRef: React.RefObject<Chart<"line">>
     entryEditorRef: React.RefObject<EntryEditor>
 }
 
@@ -25,10 +25,10 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
                 <button onClick={this.createNewData}>New Turnips Data</button>
                 <button onClick={this.openDataFileSelection}>Select Turnips Data</button>
                 <input type="file" id="turnips-file" onChange={this.handleChange}
-                       style={{width: 0, height: 0}} ref={this.turnipsFileInputRef}/>
+                       style={{width: 0, height: 0}} ref={this.turnipsFileInputRef} hidden/>
                 <button onClick={this.downloadData}>Save Turnips Data</button>
                 {/* eslint-disable-next-line jsx-a11y/anchor-has-content,jsx-a11y/anchor-is-valid */}
-                <a download="turnips-data.json" style={{width: 0, height: 0}} ref={this.downloadDataFakeLinkRef}/>
+                <a download="turnips-data.json" style={{width: 0, height: 0}} ref={this.downloadDataFakeLinkRef} hidden/>
                 <button onClick={this.useSample}>Open Sample</button>
                 <button onClick={this.clearData}>Clear</button>
             </form>
@@ -127,12 +127,12 @@ export default class LoadTurnipsData extends React.Component<LoadTurnipsDataProp
         let normalizedEntries = entries.map(normalizeTurnipsEntry);
         this.props.tableRef.current!.setState({entries: normalizedEntries})
         const turnipsPriceChart = this.props.priceChartRef.current!
-        turnipsPriceChart.chartInstance.data = createTurnipsNumberChartData(normalizedEntries)
-        turnipsPriceChart.chartInstance.update()
+        turnipsPriceChart.data = createTurnipsNumberChartData(normalizedEntries)
+        turnipsPriceChart.update()
         this.props.priceChartContainerRef.current!.style.removeProperty('display')
         const turnipsProfitChart = this.props.profitChartRef.current!
-        turnipsProfitChart.chartInstance.data = createProfitChartData(normalizedEntries)
-        turnipsProfitChart.chartInstance.update()
+        turnipsProfitChart.data = createProfitChartData(normalizedEntries)
+        turnipsProfitChart.update()
         this.props.profitChartContainerRef.current!.style.removeProperty('display')
 
         this.clearError()
